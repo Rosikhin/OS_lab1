@@ -15,16 +15,14 @@
 
 int except = 0;
 
-void* showArray(void* size)
+void* fillArray(void* arr)
 {
-  int n = *((int*)size);
-  if (n > 0)
-  {
-  	for (int i = 1; i <= n; i++)
-  	std::cout << i;
-  }
-  else  std::cout << "Ошибка. Введено недопустимое число.\n";
-  
+  // Нулевой элемент массива - это его размер  
+   int n = *((int*)arr);
+   
+   for (int i=1; i<=n; i++) 
+   	*((int*)arr+i) = i;
+    
   return 0;
 }
 
@@ -81,7 +79,11 @@ int main()
  std::cout << "Введите размер массива: ";
  std::cin >> n;
  
- int run1 = pthread_create(&id1, NULL, showArray, &n);
+  // Нулевой элемент массива - это его размер  
+ int *array = new int(n+1);
+ array[0] = n;
+
+ int run1 = pthread_create(&id1, NULL, fillArray, array);
  int run2 = pthread_create(&id2, NULL, tryOpenFile, &flag2); 
  int run3 = pthread_create(&id3, NULL, showException, &flag3);
   
@@ -120,6 +122,10 @@ int main()
  		
  if (finish1 == EDEADLK || finish2 == EDEADLK || finish3 == EDEADLK)
  	std::cout << "Взаимная блокировка или поток указывает сам на себя\n";
+
+ std::cout << "Вывод массива чисел:\n";
+ for (int i=1; i<=n; i++) std::cout << array[i] << " ";
+
 
  std::cout << "\nЗавершение работы программы.\n";
 
